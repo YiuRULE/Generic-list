@@ -99,6 +99,7 @@
     type elem;								\
     unsigned int (*size)(struct M_CONC(STRING_TYPE, type) *);		\
     type (*front)(struct M_CONC(STRING_TYPE, type) *);			\
+    type (*back)(struct M_CONC(STRING_TYPE, type) *);                  \
     struct M_CONC(STRING_TYPE, type) *next;				\
     struct M_CONC(STRING_TYPE, type) *prev;				\
   } M_CONC(STRING_TYPE, type);						\
@@ -119,14 +120,20 @@
   {									\
     return this->elem;							\
   }									\
+  static type M_CONC(M_CONC(STRING_TYPE, type), _back)(M_CONC(STRING_TYPE, type) *this) \
+  {                                                                     \
+    while (this->next)							\
+      NEXT(this);							\
+    return this->elem;							\
+  }									\
   void M_CONC(M_CONC(STRING_TYPE, type), _ctor)(M_CONC(STRING_TYPE, type) **this, type element) \
   {									\
     (*this)->elem = element;						\
     (*this)->size = & M_CONC(M_CONC(STRING_TYPE, type), _size);		\
     (*this)->front = & M_CONC(M_CONC(STRING_TYPE, type), _front);	\
+    (*this)->back = & M_CONC(M_CONC(STRING_TYPE, type), _back);		\
     (*this)->next = (void *)0;						\
     (*this)->prev = (void *)0;						\
   }
 
-CREATE_TYPE_LIST(int)
 #endif

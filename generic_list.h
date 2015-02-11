@@ -78,7 +78,7 @@
 */
 # define GET_ELEMENT(list) list->elem
 # define SET_ELEMENT(list, element) list->elem = element
-
+# define CALL_CTOR(type, list) M_CONC(STRING_TYPE, type)_ctor(list)
 /*
 ** Define for create the type
 ** You must call this define in your global scope before using
@@ -97,8 +97,36 @@
   typedef struct M_CONC(STRING_TYPE, type)	       			\
   {									\
     type elem;								\
+    unsigned int (*size)(struct M_CONC(STRING_TYPE, type) *);		\
+    type (*front)(struct M_CONC(STRING_TYPE, type) *);			\
     struct M_CONC(STRING_TYPE, type) *next;				\
     struct M_CONC(STRING_TYPE, type) *prev;				\
-  } M_CONC(STRING_TYPE, type);
+  } M_CONC(STRING_TYPE, type);						\
+									\
+  static unsigned int M_CONC(M_CONC(STRING_TYPE, type), _size)(M_CONC(STRING_TYPE, type) *this) \
+  {									\
+    unsigned int i = 0;							\
+    									\
+    while (this)							\
+      {									\
+	++i;								\
+	NEXT(this);							\
+      }									\
+    return i;								\
+  }									\
+									\
+  static type M_CONC(M_CONC(STRING_TYPE, type), _front)(M_CONC(STRING_TYPE, type) *this) \
+  {									\
+    return this->elem;							\
+  }									\
+  void M_CONC(M_CONC(STRING_TYPE, type), _ctor)(M_CONC(STRING_TYPE, type) **this, type element) \
+  {									\
+    (*this)->elem = element;						\
+    (*this)->size = & M_CONC(M_CONC(STRING_TYPE, type), _size);		\
+    (*this)->front = & M_CONC(M_CONC(STRING_TYPE, type), _front);	\
+    (*this)->next = (void *)0;						\
+    (*this)->prev = (void *)0;						\
+  }
 
+CREATE_TYPE_LIST(int)
 #endif

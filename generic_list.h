@@ -78,7 +78,8 @@
 */
 # define GET_ELEMENT(list) list->elem
 # define SET_ELEMENT(list, element) list->elem = element
-# define CALL_CTOR(type, list) M_CONC(STRING_TYPE, type)_ctor(list)
+# define CALL_CTOR(type, list) M_CONC(M_CONC(STRING_TYPE, type), _ctor)(list)
+
 /*
 ** Define for create the type
 ** You must call this define in your global scope before using
